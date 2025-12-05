@@ -1,0 +1,63 @@
+version: '3.8'
+services:
+  mattermost:
+    image: mattermost/mattermost-team-edition:latest
+    ports:
+      - "8065:8065"
+    environment:
+      - MM_SQLSETTINGS_DRIVERNAME=postgres
+      - MM_SQLSETTINGS_DATASOURCE=${MM_SQLSETTINGS_DATASOURCE}
+      - MM_SERVICESETTINGS_SITEURL=http://localhost:8065
+    volumes:
+      - mattermost_data:/mattermost/data
+      - mattermost_logs:/mattermost/logs
+      - mattermost_plugins:/mattermost/plugins
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  mattermost_data:
+  mattermost_logs:
+  mattermost_plugins:
+  postgres_data:
+
+
+
+
+
+
+
+
+
+# 1. Identifier pourquoi la connexion à la base de données échoue
+#   => mattermost essaie de se connecter en SSL, mais postgre ne l'a pas d'activé
+#   => postgre n'a pas la version minimum compatible avec mattermost
+#     mattermost-1  | Error: failed to initialize platform: cannot create store: error while checking DB version: minimum Postgres version requirements not met. Found: 13.23, Wanted: 14.0
+
+# 2. Vérifier le format de la chaîne de connexion Mattermost
+#   => ajout de ?sslmode=disable
+
+# 3. Sécuriser la configuration avec des variables d'environnement
+#   => .env non versionné, exemple dans .env.example
+
+# 4. Tester la création d'un compte utilisateur sur Mattermost
+#   => c'est ok

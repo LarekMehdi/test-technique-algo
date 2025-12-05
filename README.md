@@ -35,3 +35,17 @@ Cette partie regroupe des fonctions utilitaires pour manipuler des objets JavaSc
     - Utilisation des fonctions natives JS (Object.keys, Object.values, reduce, filter, etc) pour garantir performance et compatibilité.
 
     - Fonctions de transformation (transformValues, mergeObjects) et d’analyse (getObjectStats, countValues) conçues pour être réutilisables dans plusieurs projets, comme de vrais utilitaires métier.
+
+## DOCKER COMPOSE
+
+Chaque exercice de Docker à son propre docker compose, certain necessitant des variables d'environnement. Elles sont toutes présentes dans le fichier .env.example, qu'il faut copier dans un fichier .env.
+
+```bash
+# 1. Renommer le docker compose souhaité en enlevant le numéro a la fin (docker-compose1.yaml => docker-compose.yaml)
+
+# 2. lancer le docker compose:
+docker compose up
+
+# 3. Pour arreter les conteneurs et supprimer les volumes:
+docker compose down -v
+```

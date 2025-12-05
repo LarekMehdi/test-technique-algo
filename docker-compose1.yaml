@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: user_674765465464
+      WORDPRESS_DB_PASSWORD: ergeghUYVKUvghvkhgtcyTC0976
+      WORDPRESS_DB_NAME: bdd_wordpress_xjhvkezdhjl
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: bdd_wordpress_xjhvkezdhjl
+      MYSQL_USER: user_674765465464
+      MYSQL_PASSWORD: ergeghUYVKUvghvkhgtcyTC0976
+      MYSQL_ROOT_PASSWORD: 1222YVgvkvvkKVCcckycy78776
+    volumes:
+      - mysql_data:/var/lib/mysql
+    # ports:
+    #   - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: 1222YVgvkvvkKVCcckycy78776
+    depends_on:
+      - mysql
+
+volumes:
+  wordpress_data:
+  mysql_data:
+
+
+
+
+# 1. Identifier pourquoi MySQL ne démarre pas
+#   => pas de password root défini
+
+# 2. Corriger les problèmes de connexion WordPress ↔ MySQL
+#   => pas de probleme de connexion, j'ai bien la base wordpress sur phpMyAdmin
+
+# 3. Sécuriser la configuration (mots de passe, réseau)
+#   => ne plus exposer MySQL
+#   => changement des mdp
+
+# 4. Tester l'accès à WordPress (port 8080) et PhpMyAdmin (port 8081)
+#   => c'est ok

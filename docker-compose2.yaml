@@ -1,0 +1,72 @@
+version: '3.8'
+services:
+  nextcloud:
+    image: nextcloud:latest
+    ports:
+      - "8080:80"
+    environment:
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud123
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+      - REDIS_HOST_PASSWORD=redispassword12340000
+    volumes:
+      - nextcloud_data:/var/www/html
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nextcloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    command: redis-server --requirepass redispassword12340000
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  nextcloud_data:
+  postgres_data:
+
+
+
+
+
+
+
+# 1. Identifier pourquoi Nextcloud affiche "Internal Server Error"
+#   => je vois pas d'erreur, NextCloud semble fonctionner
+
+# 2. Intégrer Redis comme cache pour Nextcloud
+#   => utilisation d'un mdp pour redis
+
+# 3. Mettre en place les health checks appropriés
+#   => health checks mis en place
+
+# 4. Tester l'accès à Nextcloud et la création d'un utilisateur admin
+#   => créé sans soucis
