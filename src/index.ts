@@ -4,7 +4,9 @@ run();
 
 
 function run() {
+    console.log();
     console.log("*********************** STRING ***********************");
+    console.log();
     console.log('getStringLengthNoSpace => ', StringAlgo.getStringLengthNoSpace("Bonjour le monde !"));
     console.log('personalizedGreeting => ', StringAlgo.personalizedGreeting("jean-pierre"));
     console.log('isExclamation => ', StringAlgo.isExclamation("Je suis très satisfait !"));
@@ -20,5 +22,11 @@ function run() {
     console.log('longestSequence => ', StringAlgo.longestSequence("aaaaaaaabbbbbccc"));
     console.log('truncateString => ', StringAlgo.truncateString("Ceci est une très longue description d'un produit", 25));
     console.log('capitalizeWords => ', StringAlgo.capitalizeWords("bienvenue sur notre site web"));
+
+    console.log();
+    console.log();
+    console.log();
+    console.log("*********************** OBJECT 2 ***********************");
+    console.log();
 
 }
