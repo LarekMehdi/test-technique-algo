@@ -4,5 +4,5 @@ run();
 
 
 function run() {
-    StringAlgo.test();
+    
 }
