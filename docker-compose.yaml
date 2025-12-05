@@ -1,58 +1,72 @@
 version: '3.8'
 services:
-  wordpress:
-    image: wordpress:latest
+  nextcloud:
+    image: nextcloud:latest
     ports:
       - "8080:80"
     environment:
-      WORDPRESS_DB_HOST: mysql
-      WORDPRESS_DB_USER: user_674765465464
-      WORDPRESS_DB_PASSWORD: ergeghUYVKUvghvkhgtcyTC0976
-      WORDPRESS_DB_NAME: bdd_wordpress_xjhvkezdhjl
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud123
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+      - REDIS_HOST_PASSWORD=redispassword12340000
     volumes:
-      - wordpress_data:/var/www/html
+      - nextcloud_data:/var/www/html
     depends_on:
-      - mysql
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  mysql:
-    image: mysql:8.0
+  postgres:
+    image: postgres:13
     environment:
-      MYSQL_DATABASE: bdd_wordpress_xjhvkezdhjl
-      MYSQL_USER: user_674765465464
-      MYSQL_PASSWORD: ergeghUYVKUvghvkhgtcyTC0976
-      MYSQL_ROOT_PASSWORD: 1222YVgvkvvkKVCcckycy78776
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud123
     volumes:
-      - mysql_data:/var/lib/mysql
-    # ports:
-    #   - "3306:3306"
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - "8081:80"
-    environment:
-      PMA_HOST: mysql
-      PMA_USER: root
-      PMA_PASSWORD: 1222YVgvkvvkKVCcckycy78776
-    depends_on:
-      - mysql
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nextcloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    command: redis-server --requirepass redispassword12340000
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  wordpress_data:
-  mysql_data:
+  nextcloud_data:
+  postgres_data:
 
 
 
 
-# 1. Identifier pourquoi MySQL ne démarre pas
-#   => pas de password root défini
 
-# 2. Corriger les problèmes de connexion WordPress ↔ MySQL
-#   => pas de probleme de connexion, j'ai bien la base wordpress sur phpMyAdmin
 
-# 3. Sécuriser la configuration (mots de passe, réseau)
-#   => ne plus exposer MySQL
-#   => changement des mdp
 
-# 4. Tester l'accès à WordPress (port 8080) et PhpMyAdmin (port 8081)
-#   => c'est ok
+# 1. Identifier pourquoi Nextcloud affiche "Internal Server Error"
+#   => je vois pas d'erreur, NextCloud semble fonctionner
+
+# 2. Intégrer Redis comme cache pour Nextcloud
+#   => utilisation d'un mdp pour redis
+
+# 3. Mettre en place les health checks appropriés
+#   => health checks mis en place
+
+# 4. Tester l'accès à Nextcloud et la création d'un utilisateur admin
+#   => créé sans soucis
