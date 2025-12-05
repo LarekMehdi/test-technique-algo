@@ -38,17 +38,8 @@ export abstract class ObjectAlgo {
         return result;
     }
 
-    // TODO: refacto
     private static __hasPropertyNotNull(formData: {[key: string]: any}, key: string): boolean {
-        const keys = Object.keys(formData);
-        for (let k of keys) {
-            if (k === key) {
-                if (formData[key] !== null && formData[key] !== undefined && formData[key] !== '') {
-                    return true;
-                }
-            } 
-        }
-        return false;
+        return formData[key] != null && formData[key] !== '';
     }
 
 
@@ -73,9 +64,6 @@ export abstract class ObjectAlgo {
         for (let k of keys) {
             const value = object[k];
             const nestedKeys = k.trim().split('.');
-            
-            //const nestedObject = {[nestedKeys[1]]: value}
-            //result[nestedKeys[0]] = nestedObject;
 
             nestedKeys.reduce((acc, key, index) => {
                 // dernière clé, on assigne la valeur
@@ -118,19 +106,13 @@ export abstract class ObjectAlgo {
     }
 
 
-    // TODO: refacto
     /** Écrivez une fonction qui compte les occurrences de valeurs dans un objet */
     static countValues(object: {[key: string]: string}): {[key: string]: number} {
         let result: {[key: string]: number} = {};
         const values = Object.keys(object).map(key => object[key]);
         
-        for (let value of values) {
-            let occurence = 0;
-            // pour chaque valeur, on parcour de nouveau les valeurs pour trouver les similaires
-            for (let v of values) {
-                if (v === value) occurence++;
-            }
-            result[value] = occurence;
+        for (const v of values) {
+            result[v] = (result[v] || 0) + 1;
         }
 
         return result;
@@ -171,10 +153,9 @@ export abstract class ObjectAlgo {
         return Object.keys(object).filter(key => object[key] === value);
     }
 
-    // TODO: a revoir?
     /** Écrivez une fonction qui trouve la valeur maximale dans un objet de nombres */
     static findMaxValue(object: {[key: string]: number}): number {
-        let maxValue: number = 0;
+        let maxValue: number = Math.max(...Object.values(object));
 
         const values = Object.keys(object).map(key => object[key]);
         for (let value of values) {
@@ -287,14 +268,13 @@ export abstract class ObjectAlgo {
     }
 
 
-    // TODO: a revoir
     /** Écrivez une fonction qui convertit un objet en chaîne de paramètres d'URL */
     static objectToUrlParams(object: {[key: string]: string|number|boolean}): string {
         if (object.hasOwnProperty('query') && (typeof object.query === 'string')) {
-            const query = object.query;
-            const formattedQuery = query.replace(' ', '%20');
+            const query: string = object.query;
+            const formattedQuery: string = encodeURIComponent(query);
 
-            let result = `query=${formattedQuery}`;
+            let result: string = `query=${formattedQuery}`;
 
             for (const key in object) {
                 if (key !== 'query') {
@@ -312,22 +292,21 @@ export abstract class ObjectAlgo {
     }
 
 
-    // TODO: a revoir
     /** Écrivez une fonction qui génère un résumé statistique d'un objet contenant des nombres */
     static getObjectStats(object: {[key: string]: number}): {[key: string]: {[key: string]: number}} {
         let result: {[key: string]: {[key: string]: number}} = {};
-        const values = Object.keys(object).map(key => object[key]);
-        const n = values.length;
+        const values: number[] = Object.keys(object).map(key => object[key]);
+        const n: number = values.length;
 
-        const minValue = Math.min(...values);
-        const maxValue = Math.max(...values);
-        let total = 0;
+        const minValue: number = Math.min(...values);
+        const maxValue: number = Math.max(...values);
+        let total: number = 0;
 
         for (const value of values) {
             total += value;
         }
 
-        const average = total / n;
+        const average: number = total / n;
 
         // BASIC
         let basic: {[key: string]: number} = {};
@@ -337,11 +316,11 @@ export abstract class ObjectAlgo {
         basic.total = total;
 
         
-        values.sort(function(a, b){ return a - b; });
-        var i = values.length / 2;
-        const median = i % 1 == 0 ? (values[i - 1] + values[i]) / 2 : values[Math.floor(i)];
+        values.sort((a, b) => a - b);
+        var i: number = values.length / 2;
+        const median: number = i % 1 == 0 ? (values[i - 1] + values[i]) / 2 : values[Math.floor(i)];
 
-        const mean = values.reduce((sum, num) => sum + num, 0) / n;
+        const mean: number = values.reduce((sum, num) => sum + num, 0) / n;
         const squaredDifferences = values.map(num => (num - mean) ** 2); // élève a la puissance (num - mean)^2
         const variance = squaredDifferences.reduce((sum, diff) => sum + diff, 0) / n;
 
