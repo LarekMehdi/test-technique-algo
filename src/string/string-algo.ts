@@ -83,24 +83,18 @@ export abstract class StringAlgo {
         return (firstChar.toLowerCase() + transformedRest);
     }
 
-    //TODO: a revoir?
     /** Écrivez une fonction qui compte le nombre de voyelles dans une chaîne
      * Cas d'usage: Dans une application d'aide à l'apprentissage de la poésie, cette fonction peut servir à analyser
      *  la sonorité des vers et identifier les assonances. Cela aide les élèves à comprendre la structure phonétique des poèmes. */
     static numberOfVowel(text: string): number {
-        let nbOfVowel = 0;
-        const formatted = text.trim().split('');
-        const enumValues = Object.values(VOWEL) as string[];
+        const vowels: string[] = Object.values(VOWEL).map(v => v.toLowerCase());
+        let count: number = 0;
 
-        for (let i=0; i<formatted.length; i++) {
-            for (let vowel of enumValues) {
-                if (formatted[i] === vowel) {
-                    nbOfVowel++;
-                    continue;
-                }
-            }
+        for (const char of text.toLowerCase()) {
+            if (vowels.includes(char)) count++;
         }
-        return nbOfVowel;
+    
+        return count;
     }
 
     /** Écrivez une fonction qui alterne majuscules et minuscules dans une chaîne
@@ -125,61 +119,59 @@ export abstract class StringAlgo {
     }
 
 
-    // TODO: a revoir?
     /** Écrivez une fonction qui supprime les caractères en double consécutifs
      * Cas d'usage: Dans un système de nettoyage de données pour un service client, cette fonction peut être utilisée pour corriger 
      * les erreurs de frappe courantes dans les messages des utilisateurs, notamment les répétitions de caractères dues à des
      *  touches maintenues trop longtemps. */
     static removeDuplicates(text: string): string {
-        const enumValues = Object.values(DOUBLE_CHAR) as string[];
-        const formatted = text.trim().split('');
-        let result = '';
+        const enumValues: string[] = Object.values(DOUBLE_CHAR) as string[];
+        const formatted: string[] = text.trim().split('');
+        let result: string = '';
 
-        for (let i=0; i<formatted.length; i++) {
-            // Si le caractère courant est différent du précédent, on l'ajoute au résultat
-            if (formatted[i] !== formatted[i - 1]) {
+        for (let i = 0; i < formatted.length; i++) {
+            if (i === 0) {
+                // premier caractère, on ajoute toujours
                 result += formatted[i];
-            // On garde certaines lettres en doubles, celles qui peuvent l'etre   
-            } else if (enumValues.includes(formatted[i])){
-                if (formatted[i] !== formatted[i - 2]) {
+            } else if (formatted[i] !== formatted[i - 1]) {
+                result += formatted[i];
+            } else if (enumValues.includes(formatted[i])) {
+                // si c'est autorisé en double, on regarde le caractère d'avant le précédent
+                if (i < 2 || formatted[i] !== formatted[i - 2]) {
                     result += formatted[i];
                 }
             }
         }
+
         return result;
     }
 
 
-    // TODO: a revoir?
     /** Écrivez une fonction qui extrait les initiales d'un nom complet
      * Cas d'usage: Dans un système de gestion des ressources humaines d'une grande entreprise, cette fonction est utilisée pour générer automatiquement
      *  des identifiants uniques pour les employés. 
      * Par exemple, lorsqu'un nouveau collaborateur rejoint l'entreprise */
     static getInitials(fullname: string): string {
-        const formatted = fullname.trim().split(' ');
+        const formatted: string[] = fullname.trim().split(' ');
         let result: string = '';
-
         for (let f of formatted) {
             result += f.charAt(0).toUpperCase();
         }
+
         return result;
     }
 
 
-    // TODO: a revoir
     /** Écrivez une fonction qui masque les caractères d'une chaîne sauf les N derniers
      * Cas d'usage: Dans une application bancaire sécurisée, cette fonction est essentielle pour l'affichage des données sensibles dans les relevés
      *  de compte et les rapports de transaction */
     static maskString(text: string, numberToShow: number): string {
-        const formatted = text.trim().split('');
-        const indexStart = formatted.length - numberToShow;
-        let result = '';
-
-        for (let i=indexStart; i<formatted.length; i++) {
-            result += formatted[i];
-        }
-
-        return result;
+        const length: number = text.length;
+        if (numberToShow >= length) return text;
+        
+        const maskedPart: string = '*'.repeat(length - numberToShow);
+        const visiblePart: string = text.slice(-numberToShow);
+        
+        return maskedPart + visiblePart;
     }
 
 
@@ -190,7 +182,7 @@ export abstract class StringAlgo {
     static isPalindrome(text: string): boolean {
         // supprime la punctuation mais conserve les accents, cédilles, ect... puis on enleve tous les espaces vide
         // NFD permet de séparer les lettres et leur accent, pour ensuite ne garder que la lettre
-        const formatted = text.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        const formatted: string[] = text.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
             .replace(/[^\p{L}\p{N}\s']/gu, '').replace(/\s+/g, '').split('');
 
         for (let i=0; i<formatted.length; i++) {

@@ -11,7 +11,7 @@ function run() {
     console.log('reverseSentence => ', StringAlgo.reverseSentence("Une phrase dans le bon sens"));
     console.log('numberOfOccurence => ', StringAlgo.numberOfOccurence("Il y a 7 lettres E dans cette phrase, et 6 T", 'e'));
     console.log('formatToCamelCase => ', StringAlgo.formatToCamelCase("user_first_name"));
-    console.log('numberOfVowel => ', StringAlgo.numberOfVowel("Il y 11 voyelles dans cette phrase la"));
+    console.log('numberOfVowel => ', StringAlgo.numberOfVowel("Il y 12 voyelles dans cette phrase la"));
     console.log('alternMajMin => ', StringAlgo.alternMajMin("Cette phrase doit alterner majuscule et minuscule"));
     console.log('removeDuplicates => ', StringAlgo.removeDuplicates("Il yy a deees lettres en troooooop icii, professseur Camilllllllle"));
     console.log('getInitials => ', StringAlgo.getInitials("Mehdi larek"));
